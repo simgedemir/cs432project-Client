@@ -44,6 +44,8 @@ namespace _432project_client
         private void connectButton_Click(object sender, EventArgs e)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            //comment
             string IP = ipBox.Text;
             int port;
             if (Int32.TryParse(portBox.Text, out port))
