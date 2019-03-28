@@ -7,3 +7,6 @@ c:\users\simgedemir\documents\visual studio 2015\Projects\432project_client\432p
 c:\users\simgedemir\documents\visual studio 2015\Projects\432project_client\432project_client\obj\Debug\432project_client.csproj.GenerateResource.Cache
 c:\users\simgedemir\documents\visual studio 2015\Projects\432project_client\432project_client\obj\Debug\432project_client.exe
 c:\users\simgedemir\documents\visual studio 2015\Projects\432project_client\432project_client\obj\Debug\432project_client.pdb
+C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\bin\Debug\432project_client.exe.config
+C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.exe
+C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.pdb

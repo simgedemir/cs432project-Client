@@ -23,6 +23,7 @@ namespace _432project_client
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
+            
         }
 
         private void usernameBox_TextChanged(object sender, EventArgs e)
@@ -48,6 +49,8 @@ namespace _432project_client
             //comment
             string IP = ipBox.Text;
             int port;
+            string username = usernameBox.Text;
+            string password = passwordBox.Text;
             if (Int32.TryParse(portBox.Text, out port))
             {
                 try
@@ -56,7 +59,7 @@ namespace _432project_client
                     connectButton.Enabled = false;
                     connected = true;
                     logs.AppendText("Connected to server\n");
-
+                    //username & password send
                     Thread receiveThread = new Thread(new ThreadStart(Receive));
                     receiveThread.Start();
 
