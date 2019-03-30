@@ -69,9 +69,9 @@ namespace _432project_client
                     //hashing the password
                     byte[] hashedPass = hashWithSHA256(password);
                     byte[] halfPass = new byte[16];
-                    Array.Copy(hashedPass, halfPass, 16);
+                    Array.Copy(hashedPass, 16,halfPass,0, 16);
                     //concatenating password and username 
-                    string message= generateHexStringFromByteArray(halfPass) + username;
+                    string message= Encoding.Default.GetString(halfPass) + username;
                     //RSA encryption
                     byte[] encrptedRSAmessage = encryptWithRSA(message, 3072, enc_dec_keys);
                     //sending to the server
@@ -86,7 +86,7 @@ namespace _432project_client
                         logs.AppendText("Server is down. Your message could not be sent.\n");
                         clientSocket.Close();
                     }
-                    /*
+                    /* this part is removed in Recieve method
                     try
                     {
                         clientSocket.Receive(buffer);
@@ -240,10 +240,7 @@ namespace _432project_client
 
             return result;
         }
-        private Exception Exception()
-        {
-            throw new NotImplementedException();
-        }
+
         // RSA encryption with varying bit length
         static byte[] encryptWithRSA(string input, int algoLength, string xmlStringKey)
         {
