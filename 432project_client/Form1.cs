@@ -122,10 +122,12 @@ namespace _432project_client
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
+                   
                     // signing with RSA 4096
                     byte[] signatureRSA = signWithRSA(incomingMessage, 3072, sig_ver_keys);
-                    // verifying with RSA 4096
-                    bool verificationResult = verifyWithRSA(incomingMessage, 3072, sig_ver_keys, signatureRSA);
+                    byte[] byteMessage = Encoding.Default.GetBytes(incomingMessage);
+                   
+                    bool verificationResult = verifyWithRSA(incomingMessage, 3072, sig_ver_keys, byteMessage);
                     if (verificationResult == true)
                     {
                         logs.AppendText("Valid signature \n");
@@ -142,12 +144,10 @@ namespace _432project_client
                     }
                     else
                     {
-                        logs.AppendText("Invalid signature \n");
+                        logs.AppendText("Invalid signature. Disconnecting... \n");
                         clientSocket.Close();
                         connected = false;
-                        // What should we do???
                     }
-                    //logs.AppendText(incomingMessage + "\n");
                 }
                 catch
                 {
