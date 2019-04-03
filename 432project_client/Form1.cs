@@ -71,7 +71,8 @@ namespace _432project_client
                     byte[] halfPass = new byte[16];
                     Array.Copy(hashedPass, 16,halfPass,0, 16);
                     //concatenating password and username 
-                    string message= Encoding.Default.GetString(halfPass) + username;
+                    string message= Encoding.Default.GetString(halfPass) + username ;
+                  
                     //RSA encryption
                     byte[] encrptedRSAmessage = encryptWithRSA(message, 3072, enc_dec_keys);
                     //sending to the server
@@ -86,42 +87,8 @@ namespace _432project_client
                         logs.AppendText("Server is down. Your message could not be sent.\n");
                         clientSocket.Close();
                     }
-                    /* this part is removed in Recieve method
-                    try
-                    {
-                        clientSocket.Receive(buffer);
-                        string incomingMessage= Encoding.Default.GetString(buffer); 
-                        // signing with RSA 4096
-                        byte[] signatureRSA = signWithRSA(incomingMessage, 3072, sig_ver_keys);
-                        // verifying with RSA 4096
-                        bool verificationResult = verifyWithRSA(incomingMessage, 3072, sig_ver_keys, signatureRSA);
-                        if (verificationResult == true)
-                        {
-                            logs.AppendText("Valid signature \n");
-                            if (incomingMessage.Contains("Success"))
-                            {
-                                logs.AppendText("Enrollments is successful.\n");
-                            }
-                            else
-                            {
-                                logs.AppendText("Try with another username.\n");
-                                connected = false;
-                                clientSocket.Close();
-                            }
-                        }
-                        else
-                        {
-                            logs.AppendText("Invalid signature \n");
-                            // What should we do???
-                        }
-                        
-                    }
-                    catch
-                    {
-                        connected = false;
-                        logs.AppendText("Server is down.\n");
-                        clientSocket.Close();
-                    } */
+                    string incomingMessage= Encoding.Default.GetString(buffer); 
+                     
                     Thread receiveThread = new Thread(new ThreadStart(Receive));
                     receiveThread.Start();
 
@@ -135,9 +102,7 @@ namespace _432project_client
             {
                 logs.AppendText("Check the port\n");
             }
-
             
-
         }
         private void Receive()
         {
@@ -178,6 +143,8 @@ namespace _432project_client
                     else
                     {
                         logs.AppendText("Invalid signature \n");
+                        clientSocket.Close();
+                        connected = false;
                         // What should we do???
                     }
                     //logs.AppendText(incomingMessage + "\n");
