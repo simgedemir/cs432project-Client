@@ -15,10 +15,13 @@ namespace _432project_client
 {
     public partial class Form1 : Form
     {
+        string enc_dec_keys;
         bool terminating = false;
         bool connected = false;
         Socket clientSocket;
         string username;
+        string IP;
+        int port;
 
         public Form1()
         {
@@ -46,17 +49,16 @@ namespace _432project_client
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            string enc_dec_keys;
             using (System.IO.StreamReader fileReader =
             new System.IO.StreamReader("server_enc_dec_pub.txt"))
             {
                 enc_dec_keys = fileReader.ReadLine();
             }
    
+          
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-            string IP = ipBox.Text;
-            int port;
+            IP = ipBox.Text;
+            
             username = usernameBox.Text;
             string password = passwordBox.Text;
             Byte[] buffer = new Byte[256];
@@ -65,6 +67,7 @@ namespace _432project_client
                 try
                 {
                     clientSocket.Connect(IP, port);
+
                     connectButton.Enabled = false;
                     connected = true;
                     logs.AppendText("Connected to server\n");
@@ -89,11 +92,10 @@ namespace _432project_client
                         logs.AppendText("Server is down. Your message could not be sent.\n");
                         clientSocket.Close();
                     }
-                    string incomingMessage= Encoding.Default.GetString(buffer); 
                      
                     Thread receiveThread = new Thread(new ThreadStart(Receive));
                     receiveThread.Start();
-
+                   
                 }
                 catch
                 {
@@ -106,6 +108,60 @@ namespace _432project_client
             }
             
         }
+
+
+        private void loginButton_Click(object sender, EventArgs e)
+        {
+            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            
+            string password = passwordBox.Text;
+            Byte[] buffer = new Byte[64];
+            if (Int32.TryParse(portBox.Text, out port))
+            {
+                try
+                {
+                    clientSocket.Connect(IP, port);
+
+                    loginButton.Enabled = false;
+                    connected = true;
+                    logs.AppendText("Connected to server\n");
+                    //hashing the password
+                    //byte[] hashedPass = hashWithSHA256(password);
+                    //byte[] halfPass = new byte[16];
+                    //Array.Copy(hashedPass, 16, halfPass, 0, 16);
+                    
+                    //concatenating password and username 
+                    string message = username + "Authenticate";
+                   
+                    //RSA encryption
+                    //sending to the server
+                    try
+                    {
+                        buffer = Encoding.Default.GetBytes(message);
+                        clientSocket.Send(buffer);
+                        logs.AppendText("Encrypted message has been sent. \n");
+                    }
+                    catch
+                    {
+                        connected = false;
+                        logs.AppendText("Server is down. Your message could not be sent.\n");
+                        clientSocket.Close();
+                    }                   
+                }
+                catch
+                {
+                    logs.AppendText("Could not connect to server\n");
+                }
+            }
+            else
+            {
+                logs.AppendText("Check the port\n");
+            }
+
+
+        }
+
+
         private void Receive()
         {
             string sig_ver_keys;
@@ -114,7 +170,7 @@ namespace _432project_client
             {
                  sig_ver_keys = fileReader.ReadLine();
             }
-
+            
             while (connected)
             {
                 try
@@ -137,7 +193,7 @@ namespace _432project_client
                         if (incomingMessage.Contains("SuccessEnrolled"))
                         {
                             logs.AppendText("Enrollment is successful.\n Please login \n");
-                            connectButton.Enabled = true;
+                            loginButton.Enabled = true;
                         }
                         else if (incomingMessage.Contains("SuccessLogin"))
                         {
@@ -147,7 +203,6 @@ namespace _432project_client
                             message = username + "Authenticate";
                             buffer = Encoding.Default.GetBytes(message);
                             clientSocket.Send(buffer);
-
                         }
                         else
                         {
@@ -277,6 +332,8 @@ namespace _432project_client
             logs.AppendText("Disconnected...\n");
             connected = false;
             clientSocket.Close();
+            connectButton.Enabled = true;
         }
+
     }
 }
