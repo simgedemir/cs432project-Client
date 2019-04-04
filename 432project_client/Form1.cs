@@ -18,6 +18,8 @@ namespace _432project_client
         bool terminating = false;
         bool connected = false;
         Socket clientSocket;
+        string username;
+
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -44,7 +46,7 @@ namespace _432project_client
 
         private void connectButton_Click(object sender, EventArgs e)
         {
-            string enc_dec_keys, sig_ver_keys;
+            string enc_dec_keys;
             using (System.IO.StreamReader fileReader =
             new System.IO.StreamReader("server_enc_dec_pub.txt"))
             {
@@ -55,7 +57,7 @@ namespace _432project_client
 
             string IP = ipBox.Text;
             int port;
-            string username = usernameBox.Text;
+            username = usernameBox.Text;
             string password = passwordBox.Text;
             Byte[] buffer = new Byte[256];
             if (Int32.TryParse(portBox.Text, out port))
@@ -117,27 +119,40 @@ namespace _432project_client
             {
                 try
                 {
-                    Byte[] buffer = new Byte[256];
+                    Byte[] buffer = new Byte[512];
                     clientSocket.Receive(buffer);
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
-                    incomingMessage = incomingMessage.Substring(0, incomingMessage.IndexOf("\0"));
-                   
+                    incomingMessage = incomingMessage.TrimEnd('\0');
+                    int len = incomingMessage.Length;
+                    string message = incomingMessage.Substring(384);
+                    string signiture = incomingMessage.Substring(0, 384);
                     // signing with RSA 4096
-                    byte[] signatureRSA = signWithRSA(incomingMessage, 3072, sig_ver_keys);
-                    byte[] byteMessage = Encoding.Default.GetBytes(incomingMessage);
+                    byte[] signatureRSA = Encoding.Default.GetBytes(signiture);
                    
-                    bool verificationResult = verifyWithRSA(incomingMessage, 3072, sig_ver_keys, signatureRSA);
+                    bool verificationResult = verifyWithRSA(message, 3072, sig_ver_keys, signatureRSA);
                     if (verificationResult == true)
                     {
                         logs.AppendText("Valid signature \n");
-                        if (incomingMessage.Contains("Success"))
+                        if (incomingMessage.Contains("SuccessEnrolled"))
                         {
-                            logs.AppendText("Enrollment is successful.\n");
+                            logs.AppendText("Enrollment is successful.\n Please login \n");
+                            connectButton.Enabled = true;
+                        }
+                        else if (incomingMessage.Contains("SuccessLogin"))
+                        {
+                            // challenge response protocol
+                            logs.AppendText("Authentication protocol initiated. \n");
+
+                            message = username + "Authenticate";
+                            buffer = Encoding.Default.GetBytes(message);
+                            clientSocket.Send(buffer);
+
                         }
                         else
                         {
                             logs.AppendText("Try with another username.\n");
+                            connectButton.Enabled = true;
                             connected = false;
                             clientSocket.Close();
                         }
