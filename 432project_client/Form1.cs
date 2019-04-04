@@ -127,13 +127,13 @@ namespace _432project_client
                     byte[] signatureRSA = signWithRSA(incomingMessage, 3072, sig_ver_keys);
                     byte[] byteMessage = Encoding.Default.GetBytes(incomingMessage);
                    
-                    bool verificationResult = verifyWithRSA(incomingMessage, 3072, sig_ver_keys, byteMessage);
+                    bool verificationResult = verifyWithRSA(incomingMessage, 3072, sig_ver_keys, signatureRSA);
                     if (verificationResult == true)
                     {
                         logs.AppendText("Valid signature \n");
                         if (incomingMessage.Contains("Success"))
                         {
-                            logs.AppendText("Enrollments is successful.\n");
+                            logs.AppendText("Enrollment is successful.\n");
                         }
                         else
                         {
