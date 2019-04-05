@@ -98,7 +98,6 @@ namespace _432project_client
 
                         Thread receiveThread = new Thread(new ThreadStart(Receive));
                         receiveThread.Start();
-
                     }
                     catch
                     {
