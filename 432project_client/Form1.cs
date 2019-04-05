@@ -120,10 +120,8 @@ namespace _432project_client
 
         }
 
-
         private void loginButton_Click(object sender, EventArgs e)
         {
-
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             terminating = false;
             username = usernameBox.Text;
@@ -177,7 +175,6 @@ namespace _432project_client
 
 
         }
-
 
         private void Receive()
         {
@@ -368,6 +365,7 @@ namespace _432project_client
 
             return result;
         }
+
         public static string generateHexStringFromByteArray(byte[] input)
         {
             string hexString = BitConverter.ToString(input);
@@ -382,6 +380,7 @@ namespace _432project_client
                 bytes[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
             return bytes;
         }
+
         static byte[] hashWithSHA256(string input)
         {
             // convert input string to byte array
@@ -393,6 +392,7 @@ namespace _432project_client
 
             return result;
         }
+
         static byte[] applyHMACwithSHA256(string input, byte[] key)
         {
             // convert input string to byte array
@@ -407,11 +407,17 @@ namespace _432project_client
 
         private void disconnectButton_Click(object sender, EventArgs e)
         {
+            enc_dec_keys = null;
+            sig_ver_keys = null;
+            logs.Clear();
+
             logs.AppendText("Disconnected...\n");
             connected = false;
             terminating = true;
             clientSocket.Close();
             connectButton.Enabled = true;
+            loginButton.Enabled = true;
+
         }
 
     }

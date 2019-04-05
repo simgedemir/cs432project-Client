@@ -23,3 +23,4 @@ C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432proje
 C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\_432project_client.Form1.resources
 C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\_432project_client.Properties.Resources.resources
 C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.csproj.GenerateResource.Cache
+C:\Users\User\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.csprojResolveAssemblyReference.cache
