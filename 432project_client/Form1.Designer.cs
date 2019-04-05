@@ -28,12 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             this.passwordBox = new System.Windows.Forms.TextBox();
             this.usernameBox = new System.Windows.Forms.TextBox();
             this.ipBox = new System.Windows.Forms.TextBox();
             this.portBox = new System.Windows.Forms.TextBox();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -46,16 +44,16 @@
             // 
             // passwordBox
             // 
-            this.passwordBox.Location = new System.Drawing.Point(78, 152);
-            this.passwordBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.passwordBox.Location = new System.Drawing.Point(69, 128);
+            this.passwordBox.Margin = new System.Windows.Forms.Padding(2);
             this.passwordBox.Name = "passwordBox";
             this.passwordBox.Size = new System.Drawing.Size(95, 20);
             this.passwordBox.TabIndex = 0;
             // 
             // usernameBox
             // 
-            this.usernameBox.Location = new System.Drawing.Point(78, 114);
-            this.usernameBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.usernameBox.Location = new System.Drawing.Point(69, 90);
+            this.usernameBox.Margin = new System.Windows.Forms.Padding(2);
             this.usernameBox.Name = "usernameBox";
             this.usernameBox.Size = new System.Drawing.Size(95, 20);
             this.usernameBox.TabIndex = 1;
@@ -63,24 +61,26 @@
             // 
             // ipBox
             // 
-            this.ipBox.Location = new System.Drawing.Point(78, 44);
-            this.ipBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.ipBox.Location = new System.Drawing.Point(69, 20);
+            this.ipBox.Margin = new System.Windows.Forms.Padding(2);
             this.ipBox.Name = "ipBox";
             this.ipBox.Size = new System.Drawing.Size(95, 20);
             this.ipBox.TabIndex = 2;
+            this.ipBox.Text = "127.0.0.1";
             // 
             // portBox
             // 
-            this.portBox.Location = new System.Drawing.Point(78, 78);
-            this.portBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.portBox.Location = new System.Drawing.Point(69, 54);
+            this.portBox.Margin = new System.Windows.Forms.Padding(2);
             this.portBox.Name = "portBox";
             this.portBox.Size = new System.Drawing.Size(95, 20);
             this.portBox.TabIndex = 3;
+            this.portBox.Text = "1234";
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(17, 117);
+            this.label1.Location = new System.Drawing.Point(8, 93);
             this.label1.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(58, 13);
@@ -90,7 +90,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(18, 153);
+            this.label2.Location = new System.Drawing.Point(9, 129);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(56, 13);
@@ -100,7 +100,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(54, 47);
+            this.label3.Location = new System.Drawing.Point(45, 23);
             this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(20, 13);
@@ -110,7 +110,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(45, 81);
+            this.label4.Location = new System.Drawing.Point(36, 57);
             this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(29, 13);
@@ -119,8 +119,8 @@
             // 
             // connectButton
             // 
-            this.connectButton.Location = new System.Drawing.Point(30, 196);
-            this.connectButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.connectButton.Location = new System.Drawing.Point(21, 172);
+            this.connectButton.Margin = new System.Windows.Forms.Padding(2);
             this.connectButton.Name = "connectButton";
             this.connectButton.Size = new System.Drawing.Size(72, 30);
             this.connectButton.TabIndex = 9;
@@ -130,8 +130,8 @@
             // 
             // disconnectButton
             // 
-            this.disconnectButton.Location = new System.Drawing.Point(112, 196);
-            this.disconnectButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.disconnectButton.Location = new System.Drawing.Point(103, 172);
+            this.disconnectButton.Margin = new System.Windows.Forms.Padding(2);
             this.disconnectButton.Name = "disconnectButton";
             this.disconnectButton.Size = new System.Drawing.Size(73, 30);
             this.disconnectButton.TabIndex = 10;
@@ -141,16 +141,16 @@
             // 
             // logs
             // 
-            this.logs.Location = new System.Drawing.Point(212, 35);
-            this.logs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.logs.Location = new System.Drawing.Point(203, 11);
+            this.logs.Margin = new System.Windows.Forms.Padding(2);
             this.logs.Name = "logs";
-            this.logs.Size = new System.Drawing.Size(152, 245);
+            this.logs.Size = new System.Drawing.Size(263, 245);
             this.logs.TabIndex = 11;
             this.logs.Text = "";
             // 
             // loginButton
             // 
-            this.loginButton.Location = new System.Drawing.Point(30, 231);
+            this.loginButton.Location = new System.Drawing.Point(21, 207);
             this.loginButton.Name = "loginButton";
             this.loginButton.Size = new System.Drawing.Size(155, 23);
             this.loginButton.TabIndex = 12;
@@ -162,7 +162,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(381, 291);
+            this.ClientSize = new System.Drawing.Size(486, 273);
             this.Controls.Add(this.loginButton);
             this.Controls.Add(this.logs);
             this.Controls.Add(this.disconnectButton);
@@ -175,7 +175,7 @@
             this.Controls.Add(this.ipBox);
             this.Controls.Add(this.usernameBox);
             this.Controls.Add(this.passwordBox);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Form1";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -185,11 +185,10 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox passwordBox;
-        private System.Windows.Forms.TextBox usernameBox;
         private System.Windows.Forms.TextBox ipBox;
         private System.Windows.Forms.TextBox portBox;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.TextBox usernameBox;
+        private System.Windows.Forms.TextBox passwordBox;   
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
