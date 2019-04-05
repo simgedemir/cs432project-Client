@@ -51,6 +51,7 @@ namespace _432project_client
 
         private void connectButton_Click(object sender, EventArgs e)
         {
+            terminating = false;
             if (enc_dec_keys == null)
             {
                 using (System.IO.StreamReader fileReader =
@@ -123,8 +124,9 @@ namespace _432project_client
 
         private void loginButton_Click(object sender, EventArgs e)
         {
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
+            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            terminating = false;
             username = usernameBox.Text;
             string password = passwordBox.Text;
             IP = ipBox.Text;
@@ -135,13 +137,13 @@ namespace _432project_client
                 try
                 {
                     clientSocket.Connect(IP, port);
-
+                    
                     loginButton.Enabled = false;
                     connected = true;
                     logs.AppendText("Connected to server\n");
                     //hashing the password
                     byte[] hashedPass = hashWithSHA256(password);
-                    byte[] halfPass = new byte[16];
+                    halfPass = new byte[16];
                     Array.Copy(hashedPass, 16, halfPass, 0, 16);
                     //concatenating password and username 
                     string message = username + "Authenticate";
@@ -209,7 +211,7 @@ namespace _432project_client
                         incomingMessage = incomingMessage.Substring(index + 1);
                         byte[] num = Encoding.Default.GetBytes(incomingMessage);
                         string hexnum = generateHexStringFromByteArray(num);
-
+             
                         logs.AppendText("Challenge num:\n" + hexnum + "\n");
 
                         byte[] hmacsha256 = applyHMACwithSHA256(incomingMessage, halfPass);
@@ -251,6 +253,7 @@ namespace _432project_client
                             connected = false;
                         }
                     }
+
                     else if(incomingMessage.Length>0)
                     { 
                         string message = incomingMessage.Substring(384);
@@ -407,6 +410,7 @@ namespace _432project_client
         {
             logs.AppendText("Disconnected...\n");
             connected = false;
+            terminating = true;
             clientSocket.Close();
             connectButton.Enabled = true;
         }

@@ -15,7 +15,6 @@ C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\43
 C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.pdb
 C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\bin\Debug\432project_client.exe
 C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\bin\Debug\432project_client.pdb
-C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.csprojResolveAssemblyReference.cache
 C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\_432project_client.Form1.resources
 C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\_432project_client.Properties.Resources.resources
 C:\Users\simgedemir\Documents\Visual Studio 2015\Projects\cs432project-Client\432project_client\obj\Debug\432project_client.csproj.GenerateResource.Cache
