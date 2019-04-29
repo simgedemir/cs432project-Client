@@ -24,7 +24,7 @@ namespace _432project_client
         string IP;
         int port;
         byte[] halfPass; //half of hash of password
-
+        string hexnum;
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -206,7 +206,7 @@ namespace _432project_client
                         int index = incomingMessage.IndexOf(":");
                         incomingMessage = incomingMessage.Substring(index + 1);
                         byte[] num = Encoding.Default.GetBytes(incomingMessage);
-                        string hexnum = generateHexStringFromByteArray(num);
+                        hexnum = generateHexStringFromByteArray(num);
              
                         logs.AppendText("Challenge num:\n" + hexnum + "\n");
 
@@ -228,6 +228,8 @@ namespace _432project_client
                             if (message.Contains("success"))
                             {
                                 logs.AppendText("HMAC valid.\n");
+                                //string encryptedKeys = message.Substring();
+                                byte[] sessionKeys = decryptWithAES128(encryptedKeys,halfPass,hexStringToByteArray(hexnum));
                             }
                             else if (message.Contains("error"))
                             {
@@ -404,7 +406,40 @@ namespace _432project_client
 
             return result;
         }
+        static byte[] decryptWithAES128(string input, byte[] key, byte[] IV)
+        {
+            // convert input string to byte array
+            byte[] byteInput = Encoding.Default.GetBytes(input);
 
+            // create AES object from System.Security.Cryptography
+            RijndaelManaged aesObject = new RijndaelManaged();
+            // since we want to use AES-128
+            aesObject.KeySize = 128;
+            // block size of AES is 128 bits
+            aesObject.BlockSize = 128;
+            // mode -> CipherMode.*
+            aesObject.Mode = CipherMode.CFB;
+            // feedback size should be equal to block size
+            // aesObject.FeedbackSize = 128;
+            // set the key
+            aesObject.Key = key;
+            // set the IV
+            aesObject.IV = IV;
+            // create an encryptor with the settings provided
+            ICryptoTransform decryptor = aesObject.CreateDecryptor();
+            byte[] result = null;
+
+            try
+            {
+                result = decryptor.TransformFinalBlock(byteInput, 0, byteInput.Length);
+            }
+            catch (Exception e) // if encryption fails
+            {
+                Console.WriteLine(e.Message); // display the cause
+            }
+
+            return result;
+        }
         private void disconnectButton_Click(object sender, EventArgs e)
         {
             enc_dec_keys = null;
