@@ -24,7 +24,7 @@ namespace _432project_client
         string IP;
         int port;
         byte[] halfPass; //half of hash of password
-        string hexnum;
+        string hexnum="";
         public Form1()
         {
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -228,8 +228,12 @@ namespace _432project_client
                             if (message.Contains("success"))
                             {
                                 logs.AppendText("HMAC valid.\n");
-                                //string encryptedKeys = message.Substring();
+                                int index = message.IndexOf("HMAC");
+                                string encryptedKeys = message.Substring(0,index);
                                 byte[] sessionKeys = decryptWithAES128(encryptedKeys,halfPass,hexStringToByteArray(hexnum));
+                                string tempKeys = Encoding.Default.GetString(sessionKeys);
+                                string en_dec_session_key = tempKeys.Substring(0,tempKeys.Length/2);
+                                string auth_session_key = tempKeys.Substring(tempKeys.Length / 2);
                             }
                             else if (message.Contains("error"))
                             {
