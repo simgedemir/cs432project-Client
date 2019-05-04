@@ -17,6 +17,9 @@ namespace _432project_client
     {
         string enc_dec_keys;
         string sig_ver_keys;
+        string en_dec_session_key; // per session
+        string auth_session_key; //per session
+
         bool terminating = false;
         bool connected = false;
         Socket clientSocket;
@@ -30,7 +33,6 @@ namespace _432project_client
             Control.CheckForIllegalCrossThreadCalls = false;
             this.FormClosing += new FormClosingEventHandler(Form1_FormClosing);
             InitializeComponent();
-
         }
 
         private void usernameBox_TextChanged(object sender, EventArgs e)
@@ -42,6 +44,7 @@ namespace _432project_client
         {
 
         }
+
         private void Form1_FormClosing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             connected = false;
@@ -63,7 +66,7 @@ namespace _432project_client
                 byte[] encKeyByte = Encoding.Default.GetBytes(enc_dec_keys);
                 string hexKeys = generateHexStringFromByteArray(encKeyByte);
 
-                logs.AppendText("Server's public key: " + hexKeys);
+                // logs.AppendText("Server's public key: " + hexKeys);
             }
 
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -188,7 +191,7 @@ namespace _432project_client
 
                 byte[] signKeyByte = Encoding.Default.GetBytes(sig_ver_keys);
                 string signHex = generateHexStringFromByteArray(signKeyByte);
-                logs.AppendText("Server's signing key: " + signHex);
+                //logs.AppendText("Server's signing key: " + signHex);
             }
 
             while (connected)
@@ -200,22 +203,27 @@ namespace _432project_client
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.TrimEnd('\0');
-
-                    if (incomingMessage.Contains("Challenge:"))
+                    if (incomingMessage.Contains("ERR"))
+                    {
+                        logs.AppendText(incomingMessage.Substring(5) + "\n");
+                        clientSocket.Close();
+                        loginButton.Enabled = true;
+                    }
+                    else if (incomingMessage.Contains("Challenge:"))
                     {
                         int index = incomingMessage.IndexOf(":");
                         incomingMessage = incomingMessage.Substring(index + 1);
                         byte[] num = Encoding.Default.GetBytes(incomingMessage);
                         hexnum = generateHexStringFromByteArray(num);
              
-                        logs.AppendText("Challenge num:\n" + hexnum + "\n");
+                        //logs.AppendText("Challenge num:\n" + hexnum + "\n");
 
                         byte[] hmacsha256 = applyHMACwithSHA256(incomingMessage, halfPass);
                         string message = "HMAC{"+ username +"}" + Encoding.Default.GetString(hmacsha256);
                         byte[] response = Encoding.Default.GetBytes(message);
                         clientSocket.Send(response);
                     }
-                    else if(incomingMessage.Contains("HMAC"))
+                    else if(incomingMessage.Contains("OK"))
                     {
                         string message = incomingMessage.Substring(384);
                         string signature = incomingMessage.Substring(0, 384);
@@ -225,27 +233,25 @@ namespace _432project_client
                         bool verificationResult = verifyWithRSA(message, 3072, sig_ver_keys, signatureRSA);
                         if (verificationResult == true)
                         {
-                            if (message.Contains("success"))
+                            
+                            if (message.Contains("NOT OK"))
                             {
-                                logs.AppendText("HMAC valid.\n");
-                                int index = message.IndexOf("HMAC");
-                                string encryptedKeys = message.Substring(0,index);
-                                byte[] sessionKeys = decryptWithAES128(encryptedKeys,halfPass,hexStringToByteArray(hexnum));
-                                string tempKeys = Encoding.Default.GetString(sessionKeys);
-                                string en_dec_session_key = tempKeys.Substring(0,tempKeys.Length/2);
-                                string auth_session_key = tempKeys.Substring(tempKeys.Length / 2);
-                            }
-                            else if (message.Contains("error"))
-                            {
-                                logs.AppendText("HMAC failed.\n");
+                                logs.AppendText("HMAC NOT OK. Exiting...\n");
                                 clientSocket.Close();
                                 connected = false;
+                                loginButton.Enabled = true;
                             }
                             else
                             {
-                                logs.AppendText("Invalid HMAC response.\n");
-                                clientSocket.Close();
-                                connected = false;
+                                logs.AppendText("HMAC OK. Connection secure. \n");
+                                                              
+                                string encryptedKeys = message.Substring(2);
+                                byte[] sessionKeys = decryptWithAES128(encryptedKeys, halfPass, hexStringToByteArray(hexnum));
+                                string tempKeys = Encoding.Default.GetString(sessionKeys);
+                                en_dec_session_key = tempKeys.Substring(0, tempKeys.Length / 2);
+                                auth_session_key = tempKeys.Substring(tempKeys.Length / 2);
+                                button1.Enabled = true; //enable message sending
+                                connectButton.Enabled = false;
                             }
                         }
                         else
@@ -301,6 +307,18 @@ namespace _432project_client
                 }
             }
         }
+
+        // Send button on click --> Broadcast message sending
+        private void button1_Click(object sender, EventArgs e)
+        {
+            String message = messageBox.Text;
+            if (message.Length > 0)
+            {
+                
+
+            }
+        }
+
 
         // signing with RSA
         static byte[] signWithRSA(string input, int algoLength, string xmlString)
@@ -459,5 +477,6 @@ namespace _432project_client
 
         }
 
+       
     }
 }
