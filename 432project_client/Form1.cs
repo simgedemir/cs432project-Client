@@ -27,6 +27,7 @@ namespace _432project_client
         string IP;
         int port;
         byte[] halfPass; //half of hash of password
+        byte[] randomIV;
         string hexnum="";
         public Form1()
         {
@@ -209,6 +210,24 @@ namespace _432project_client
                         clientSocket.Close();
                         loginButton.Enabled = true;
                     }
+                    else if(incomingMessage.Contains("Broadcast:"))
+                    {
+                        int index = incomingMessage.IndexOf(":");
+                        incomingMessage = incomingMessage.Substring(index + 1);
+                        byte [] longMessage= Encoding.Default.GetBytes(incomingMessage);
+                        byte[] hmac = new byte[32];
+                        byte[] encryptedMes = new byte[16];
+                        Array.Copy(longMessage, 0, hmac, 0, 32);
+                        Array.Copy(longMessage, 32, encryptedMes, 0, 16);
+                        byte[] hmacsha256 = applyHMACwithSHA256(Encoding.Default.GetString(encryptedMes), Encoding.Default.GetBytes(auth_session_key));
+                        string hmacsha256Str = Encoding.Default.GetString(hmacsha256);
+                        string hmacstr = Encoding.Default.GetString(hmac);
+                        if (hmacstr.Equals(hmacsha256Str))
+                        {
+                            byte[] decryptedMes = decryptWithAES128(Encoding.Default.GetString(encryptedMes), Encoding.Default.GetBytes(en_dec_session_key), randomIV);
+                            logs.AppendText(Encoding.Default.GetString(decryptedMes)+ "\n");
+                        }
+                    }
                     else if (incomingMessage.Contains("Challenge:"))
                     {
                         int index = incomingMessage.IndexOf(":");
@@ -314,8 +333,18 @@ namespace _432project_client
             String message = messageBox.Text;
             if (message.Length > 0)
             {
-                
-
+                randomIV = new byte[16];
+                using (var rng = new RNGCryptoServiceProvider())
+                {
+                    rng.GetBytes(randomIV);
+                }
+                byte[] key = Encoding.Default.GetBytes(en_dec_session_key);
+                byte[] encrypedMessage = encryptWithAES128(message,key,randomIV);          
+                byte[] hmacMessage = applyHMACwithSHA256(Encoding.Default.GetString(encrypedMessage), Encoding.Default.GetBytes(auth_session_key));
+                string newMessage = "HMAC{" + username + "}" + Encoding.Default.GetString(hmacMessage);
+                newMessage = newMessage + Encoding.Default.GetString(encrypedMessage)+ Encoding.Default.GetString(randomIV);
+                byte[] buffer = Encoding.Default.GetBytes(newMessage);
+                clientSocket.Send(buffer);
             }
         }
 
@@ -425,6 +454,40 @@ namespace _432project_client
             HMACSHA256 hmacSHA256 = new HMACSHA256(key);
             // get the result of HMAC operation
             byte[] result = hmacSHA256.ComputeHash(byteInput);
+
+            return result;
+        }
+        static byte[] encryptWithAES128(string input, byte[] key, byte[] IV)
+        {
+            // convert input string to byte array
+            byte[] byteInput = Encoding.Default.GetBytes(input);
+
+            // create AES object from System.Security.Cryptography
+            RijndaelManaged aesObject = new RijndaelManaged();
+            // since we want to use AES-128
+            aesObject.KeySize = 128;
+            // block size of AES is 128 bits
+            aesObject.BlockSize = 128;
+            // mode -> CipherMode.*
+            aesObject.Mode = CipherMode.CFB;
+            // feedback size should be equal to block size
+            aesObject.FeedbackSize = 128;
+            // set the key
+            aesObject.Key = key;
+            // set the IV
+            aesObject.IV = IV;
+            // create an encryptor with the settings provided
+            ICryptoTransform encryptor = aesObject.CreateEncryptor();
+            byte[] result = null;
+
+            try
+            {
+                result = encryptor.TransformFinalBlock(byteInput, 0, byteInput.Length);
+            }
+            catch (Exception e) // if encryption fails
+            {
+                Console.WriteLine(e.Message); // display the cause
+            }
 
             return result;
         }
