@@ -26,8 +26,7 @@ namespace _432project_client
         string username;
         string IP;
         int port;
-        byte[] halfPass; //half of hash of password
-        byte[] randomIV;
+        byte[] halfPass; //half of hash of password     
         string hexnum="";
         public Form1()
         {
@@ -217,14 +216,16 @@ namespace _432project_client
                         byte [] longMessage= Encoding.Default.GetBytes(incomingMessage);
                         byte[] hmac = new byte[32];
                         byte[] encryptedMes = new byte[16];
+                        byte [] IV= new byte[16];
                         Array.Copy(longMessage, 0, hmac, 0, 32);
                         Array.Copy(longMessage, 32, encryptedMes, 0, 16);
+                        Array.Copy(longMessage, 48, IV, 0, 16);
                         byte[] hmacsha256 = applyHMACwithSHA256(Encoding.Default.GetString(encryptedMes), Encoding.Default.GetBytes(auth_session_key));
                         string hmacsha256Str = Encoding.Default.GetString(hmacsha256);
                         string hmacstr = Encoding.Default.GetString(hmac);
                         if (hmacstr.Equals(hmacsha256Str))
                         {
-                            byte[] decryptedMes = decryptWithAES128(Encoding.Default.GetString(encryptedMes), Encoding.Default.GetBytes(en_dec_session_key), randomIV);
+                            byte[] decryptedMes = decryptWithAES128(Encoding.Default.GetString(encryptedMes), Encoding.Default.GetBytes(en_dec_session_key), IV);
                             logs.AppendText(Encoding.Default.GetString(decryptedMes)+ "\n");
                         }
                     }
@@ -333,7 +334,7 @@ namespace _432project_client
             String message = messageBox.Text;
             if (message.Length > 0)
             {
-                randomIV = new byte[16];
+                byte [] randomIV = new byte[16];
                 using (var rng = new RNGCryptoServiceProvider())
                 {
                     rng.GetBytes(randomIV);
