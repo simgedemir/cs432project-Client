@@ -345,7 +345,22 @@ namespace _432project_client
                 string newMessage = "HMAC{" + username + "}" + Encoding.Default.GetString(hmacMessage);
                 newMessage = newMessage + Encoding.Default.GetString(encrypedMessage)+ Encoding.Default.GetString(randomIV);
                 byte[] buffer = Encoding.Default.GetBytes(newMessage);
-                clientSocket.Send(buffer);
+                try
+                {
+                    clientSocket.Send(buffer);
+                }
+                catch (Exception ex)
+                {
+                    Console.Write(ex);
+                    if (!terminating)
+                    {
+                        logs.AppendText("The server has disconnected\n");
+                    }
+
+                    clientSocket.Close();
+                    connected = false;
+                }
+
             }
         }
 
