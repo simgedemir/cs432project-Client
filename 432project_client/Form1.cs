@@ -203,9 +203,9 @@ namespace _432project_client
 
                     string incomingMessage = Encoding.Default.GetString(buffer);
                     incomingMessage = incomingMessage.TrimEnd('\0');
-                    if (incomingMessage.Contains("ERR"))
+                    if (incomingMessage.Contains("Error"))
                     {
-                        logs.AppendText(incomingMessage.Substring(5) + "\n");
+                        logs.AppendText( "Username taken.\n");
                         clientSocket.Close();
                         loginButton.Enabled = true;
                     }
